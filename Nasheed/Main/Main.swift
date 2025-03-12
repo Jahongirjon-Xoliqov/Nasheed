@@ -14,7 +14,7 @@ final class Main {
     
     func createWindow() {
         mainWindow = UIWindow()
-        mainWindow?.rootViewController = UIHostingController(rootView: MainView())
+        mainWindow?.rootViewController = UIHostingController(rootView: MusicPlayerView())
         mainWindow?.makeKeyAndVisible()
     }
     

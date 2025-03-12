@@ -14,6 +14,6 @@ final class AppCoordinator {
     private var nasheedWindow: UIWindow?
     
     func create() {
-        //appWindowScene = UIWindowScene(session: UISceneSession, connectionOptions: <#T##UIScene.ConnectionOptions#>)
     }
+    
 }
