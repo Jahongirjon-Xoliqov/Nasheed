@@ -15,7 +15,7 @@ class MusicViewModel: ObservableObject {
 
     func fetchMusicUrl() {
         let storage = Storage.storage()
-        let musicRef = storage.reference().child("arcane.mp3") // Path to your music file in Firebase Storage
+        let musicRef = storage.reference().child("MP3/Muhammad_Tohir-Xuz_dimana_nashid.mp3")
 
         musicRef.downloadURL { url, error in
             if let error = error {

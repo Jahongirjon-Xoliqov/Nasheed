@@ -16,6 +16,10 @@ final class Main {
         mainWindow = UIWindow()
         mainWindow?.rootViewController = UIHostingController(rootView: MusicPlayerView())
         mainWindow?.makeKeyAndVisible()
+        
+        FirebaseDataManager.default.fetchNasheeds { nasheeds in
+            print(nasheeds)
+        }
     }
     
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AAA63572D82C2900098D998 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AAA63562D82C2900098D998 /* FirebaseFirestore */; };
 		0AFE8D792D7E3E70005B00EC /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AFE8D782D7E3E70005B00EC /* FirebaseCore */; };
 		0AFE8D7B2D7E3E70005B00EC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 0AFE8D7A2D7E3E70005B00EC /* FirebaseStorage */; };
 /* End PBXBuildFile section */
@@ -43,6 +44,7 @@
 			files = (
 				0AFE8D792D7E3E70005B00EC /* FirebaseCore in Frameworks */,
 				0AFE8D7B2D7E3E70005B00EC /* FirebaseStorage in Frameworks */,
+				0AAA63572D82C2900098D998 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				0AFE8D782D7E3E70005B00EC /* FirebaseCore */,
 				0AFE8D7A2D7E3E70005B00EC /* FirebaseStorage */,
+				0AAA63562D82C2900098D998 /* FirebaseFirestore */,
 			);
 			productName = Nasheed;
 			productReference = 0AE1C7512D64E77D0070D809 /* Nasheed.app */;
@@ -358,6 +361,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0AAA63562D82C2900098D998 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A3AEE5A2D7E3D00007E5A5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
 		0AFE8D782D7E3E70005B00EC /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0A3AEE5A2D7E3D00007E5A5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
