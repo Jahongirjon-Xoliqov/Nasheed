@@ -3,21 +3,21 @@
 //
 //  Created by Abdulboriy on 21/02/25.
 //
-//---------
-//import SwiftUI
 
 
-// Draging effect incompleted!!!
 import SwiftUI
 
 struct PlayingView: View {
+    
     @Binding var isMinimized: Bool
+    
     var reciter: ReciterData
+    @EnvironmentObject var viewModel: RecitersViewModel
+    
+    
     var onMinimize: (ReciterData) -> Void
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var viewModel: RecitersViewModel
     @Environment(\.colorScheme) var colorScheme
-    
     @State private var dragOffset: CGFloat = 0
     @State private var isDragging = false
     @State private var impactFeedback = UIImpactFeedbackGenerator(style: .medium) // ✅ Haptic Feedback
@@ -25,7 +25,11 @@ struct PlayingView: View {
     var backgroundColor: Color {
         colorScheme == .dark ? Color(hex: "1E201E") : Color(hex: "F8F3D9")
     }
+    
+    
+    
 
+    //MARK: - Body
     var body: some View {
         NavigationStack {
             VStack {
@@ -66,8 +70,11 @@ struct PlayingView: View {
                             }
                         }
                 )
+                
 
                 
+                //-------------------
+
                 Image("nasheed2")
                     .resizable()
                     .frame(width: 300, height: 300)
@@ -86,12 +93,18 @@ struct PlayingView: View {
                         .foregroundColor(.secondary)
                 }
                 .padding(.bottom, 30)
-
+                
+                
+                //Bottom
                 MusicProgressView(reciter: reciter)
                     .padding(.bottom, 50)
 
                 
             }
+            
+            
+            
+            
             
             //MARK: - Toolbar
             .toolbar {
@@ -122,80 +135,6 @@ struct PlayingView: View {
 
 
 
-
-//---------
-
-//import SwiftUI
-
-
-//struct PlayingView: View {
-//    @Binding var isMinimized: Bool // Control minimization from parent
-//    var reciter: ReciterData
-//    var onMinimize: (ReciterData) -> Void // Callback function
-//    @Environment(\.dismiss) private var dismiss // 👈 Add this
-//    @EnvironmentObject var viewModel: RecitersViewModel
-//    @Environment(\.colorScheme) var colorScheme
-//
-//    var backgroundColor: Color {
-//        colorScheme == .dark ? Color(hex: "1E201E") /* Hex #243642*/ : Color(hex: "FFF0D1")
-//    }
-//
-//    var body: some View {
-//        NavigationStack {
-//            VStack {
-//
-//                Spacer()
-//
-//                Image("nasheed2")
-//                    .resizable()
-//                    .frame(width: 300, height: 300)
-//                    .clipShape(.rect(cornerRadius: 20))
-//                    .shadow(radius: 4)
-//
-//
-//                Spacer()
-//
-//                VStack(alignment: .center) {
-//                    Text(reciter.nasheedName)
-//                        .font(.largeTitle)
-//                        .fontDesign(.serif)
-//
-//                    Text(reciter.name)
-//                        .font(.headline)
-//                        .foregroundColor(.secondary)
-//                }
-//                .padding(.bottom, 50)
-//
-//                MusicProgressView(reciter: reciter)
-//
-//                Spacer()
-//            }
-//            .toolbar {
-//                ToolbarItem(placement: .topBarLeading) {
-//                    Button {
-//                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7, blendDuration: 0)) {
-//                            isMinimized = true
-//                            onMinimize(reciter) // ✅ Update minimizedReciter in parent
-//                            dismiss() // ✅ Dismiss full-screen cover
-//                        }
-//                    } label: {
-//                        Image(systemName: "chevron.down")
-//                            .imageScale(.medium)
-//                            .font(.system(size: 25))
-//                            .fontWeight(.semibold)
-//                            .tint(.red)
-//                    }
-//                }
-//            }
-//            .navigationTitle(reciter.nasheedName)
-//            .navigationBarTitleDisplayMode(.inline)
-////            .toolbarBackground(.cyan.opacity(0.05), for: .navigationBar)//set for top part colors
-//            .toolbarBackgroundVisibility(.visible, for: .navigationBar)//make top part visible
-//            .background(backgroundColor)
-//        }
-//
-//    }
-//}
 
 
 #Preview {

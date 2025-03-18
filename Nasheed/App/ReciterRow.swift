@@ -29,10 +29,11 @@ struct ReciterRow: View {
     @State private var isDownloading = false
     @State private var showCheckmark = false
     @State private var completedParts: Int = 0
-    
-    
+
     let totalParts: Int = 3 // Change this dynamically based on file size
 
+    
+    //MARK: - Body
     var body: some View {
         HStack {
             Image("nasheed2")
@@ -148,69 +149,4 @@ struct QuarterCircleProgressViewStyle: ProgressViewStyle {
 #Preview {
     ReciterRow(reciter: ReciterData(name: "Abdulboriy", nasheedName: "Mening Nashidim"))
 }
-    
-    
-    
-    
-// MARK: - Old version
-//    let reciter: ReciterData
-//    @ObservedObject var viewModel: RecitersViewModel
-//    @State private var isDownloading = false
-//    @State private var showCheckmark = false
-//    @State private var progress: CGFloat = 0.0
-//    
-//    var body: some View {
-//        HStack {
-//            Image("nasheed2")
-//                .resizable()
-//                .frame(width: 46, height: 46)
-//                .cornerRadius(36)
-//                .padding(.trailing, 10)
-//            //                .padding(.leading, 4)
-//            
-//            VStack(alignment: .leading) {
-//                Text(reciter.nasheedName).font(.title3)
-//                    .fontDesign(.serif)
-//                
-//                Text(reciter.name).font(.subheadline)
-//                    .fontDesign(.serif)
-//                    .foregroundStyle(.secondary)
-//            }
-//            Spacer()
-//            
-//            if isDownloading {
-//                ProgressView()
-//                    .progressViewStyle(CircularProgressViewStyle())
-//                    .transition(.opacity)
-//            } else if showCheckmark {
-//                Image(systemName: "checkmark")
-//                    .foregroundColor(.green)
-//                    .transition(.opacity)
-//            } else {
-//                Button(action: {
-//                    isDownloading = true
-//                    viewModel.toggleDownload(for: reciter)
-//                    
-//                    // Simulate download completion
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//                        isDownloading = false
-//                        showCheckmark = true
-//                        
-//                        // Hide checkmark after 1 second
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                            showCheckmark = false
-//                        }
-//                    }
-//                }) {
-//                    Image(systemName: "arrow.down.circle")
-//                        .font(.system(size: 24))
-//                }
-//            }
-//        }
-//        .padding()
-//        .animation(.easeInOut, value: isDownloading)
-//        .animation(.easeInOut, value: showCheckmark)
-//        
-//    }
-//}
 
