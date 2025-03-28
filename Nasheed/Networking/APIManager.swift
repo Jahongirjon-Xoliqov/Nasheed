@@ -90,13 +90,23 @@ final class APIManager {
 
             // Decode API response
             let fetchedNasheeds = try JSONDecoder().decode([Nasheed].self, from: data)
+            print("✅ Decoded Nasheeds: \(fetchedNasheeds)")
+            print("D1")
 
             // Fetch existing Nasheeds from SwiftData
             let fetchDescriptor = FetchDescriptor<NasheedEntity>()
+            let testFetch = try! modelContext.fetch(fetchDescriptor)
+            print("🧐 TEST FETCH: \(testFetch)")
+           
             let existingNasheeds = try modelContext.fetch(fetchDescriptor)
+            print("📌 Existing Nasheeds Count: \(existingNasheeds.count)")
+            
 
             for nasheed in fetchedNasheeds {
                 // Check if this nasheed already exists in SwiftData
+                let alreadyExists = existingNasheeds.contains { $0.id == nasheed.id }
+                            print("🔍 Checking if exists: \(nasheed.id) -> \(alreadyExists)")
+                
                 if !existingNasheeds.contains(where: { $0.id == nasheed.id }) {
                     let newNasheed = NasheedEntity(
                         id: nasheed.id,
@@ -105,13 +115,24 @@ final class APIManager {
                         file: nasheed.file,
                         reciterPhoto: nasheed.reciterPhoto,
                         cover: nasheed.cover
+                        
                     )
+                    print("✅ Inserting Nasheed: \(newNasheed)")
                     modelContext.insert(newNasheed)
                 }
             }
 
             // Save changes to SwiftData
+            
+            
             try modelContext.save()
+            print("💾 SwiftData Save Successful")
+            // 🟢 Fetch again to confirm data is saved
+            
+            
+            
+            let updatedNasheeds = try modelContext.fetch(fetchDescriptor)
+            print("✅ New Nasheeds in SwiftData: \(updatedNasheeds)")
 
         } catch {
             print("❌ API Error: \(error.localizedDescription)")
