@@ -7,10 +7,11 @@
 
 import Foundation
 import SwiftUI
+import SDWebImageSwiftUI
 
 
 struct MinimizedPlayerView: View {
-    var reciter: ReciterData
+    var reciter: NasheedEntity
     var onTap: () -> Void
     @Environment(\.colorScheme) var colorScheme
 
@@ -20,16 +21,16 @@ struct MinimizedPlayerView: View {
     
     var body: some View {
         HStack {
-            Image("reciter1")
+            WebImage(url: URL(string: reciter.reciterPhoto))
                 .resizable()
                 .frame(width: 40, height: 40)
                 .cornerRadius(20)
             
             VStack(alignment: .leading) {
-                Text(reciter.nasheedName)
+                Text(reciter.title)
                     .font(.headline)
                     .fontDesign(.serif)
-                Text(reciter.name)
+                Text(reciter.reciter)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

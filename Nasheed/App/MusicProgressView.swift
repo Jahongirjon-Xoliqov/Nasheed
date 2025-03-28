@@ -14,7 +14,7 @@ struct MusicProgressView: View {
     @State private var isLiked: Bool = false
     
     @EnvironmentObject var viewModel: RecitersViewModel
-    let reciter: ReciterData
+    let reciter: NasheedEntity
     
     @Environment(\.colorScheme) var colorScheme
 
@@ -218,6 +218,6 @@ struct MusicProgressView: View {
 }
 
 #Preview {
-    MusicProgressView(reciter: ReciterData(name: "Test", nasheedName: "Test"))
+    MusicProgressView(reciter: NasheedEntity(id: "sdfsdf", reciter: "Abdu", title: "Go go go", file: "https://firebasestorage.googleapis.com:443/v0/b/nasheed-65ef6.firebasestorage.app/o/MP3%2FOsama_al_Safi-Tabalagh_bellqaleel.mp3?alt=media&token=b72092b7-a2bf-4a8c-8cd1-53c212b87c18", reciterPhoto: "https://firebasestorage.googleapis.com:443/v0/b/nasheed-65ef6.firebasestorage.app/o/CoverImages%2FstandartCover.jpeg?alt=media&token=6ade49be-c174-415b-b1db-b0ddbf284895", cover: ""))
 //        .colorScheme(.dark)
 }

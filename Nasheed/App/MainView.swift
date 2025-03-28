@@ -1,7 +1,8 @@
 import SwiftUI
-
+import SwiftData
 struct MainView: View {
-    @StateObject private var viewModel = RecitersViewModel()
+    @State private var viewModel: RecitersViewModel?
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         TabView {
@@ -25,7 +26,13 @@ struct MainView: View {
                     Label("Saved", systemImage: "bookmark.fill")
                 }
         }
-        .environmentObject(viewModel) // Pass ViewModel to all views
+        .environmentObject(viewModel ?? RecitersViewModel(modelContext: modelContext)) // ✅ Pass the ViewModel
+        .onAppear {
+                   if viewModel == nil {
+                       viewModel = RecitersViewModel(modelContext: modelContext) // ✅ Initialize safely
+                   }
+               }
+//        .environmentObject(viewModel) // Pass ViewModel to all views
         .tint(.red)
         
     }
