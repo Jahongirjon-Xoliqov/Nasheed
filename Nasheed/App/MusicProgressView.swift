@@ -6,12 +6,15 @@
 import SwiftUI
 
 struct MusicProgressView: View {
+    
+    @ObservedObject var audioManager = AudioPlayerManager.shared
+    
     @State private var progress: Double = 0.0
     let totalDuration: Double = 200 // Example: 200 seconds
     @State private var isPlaying: Bool = false
-    @State private var timer: Timer?
-    @State private var isRepeating: Bool = false
-    @State private var isLiked: Bool = false
+//    @State private var timer: Timer?
+//    @State private var isRepeating: Bool = false
+//    @State private var isLiked: Bool = false
     
     @EnvironmentObject var viewModel: RecitersViewModel
     let reciter: NasheedEntity
@@ -26,13 +29,11 @@ struct MusicProgressView: View {
         VStack {
             HStack {
                 VStack {
-                    
-                    // Custom part
+                                        
+                  
                     GeometryReader { geometry in
                         let sliderWidth = geometry.size.width // Use full width
                         
-                        
-                        //
                         ZStack(alignment: .leading) {
                             // Custom Track
                             RoundedRectangle(cornerRadius: 2)
@@ -42,37 +43,34 @@ struct MusicProgressView: View {
                             // Custom Progress Bar
                             RoundedRectangle(cornerRadius: 2)
                                 .fill(Color.red)
-                                .frame(width: (progress / totalDuration) * sliderWidth, height: 4)
+                                .frame(width: (audioManager.progress / audioManager.totalDuration) * sliderWidth, height: 4)
                             
                             // Custom SF Symbol Thumb (Draggable)
                             Image(systemName: "circle.fill")
                                 .resizable()
                                 .frame(width: 14, height: 14) // Adjust thumb size
                                 .foregroundColor(.red)
-                                .offset(x: (progress / totalDuration) * sliderWidth - 7) // Fix thumb position
+                                .offset(x: (audioManager.progress / audioManager.totalDuration) * sliderWidth - 7) // Fix thumb position
                                 .gesture(
                                     DragGesture(minimumDistance: 0)
                                         .onChanged { value in
-                                            let newProgress = min(max(0, value.location.x / sliderWidth * totalDuration), totalDuration)
-                                            progress = newProgress
+                                            let newProgress = min(max(0, value.location.x / sliderWidth * audioManager.totalDuration), audioManager.totalDuration)
+                                            audioManager.seek(to: newProgress) // 🔥 Tell AVPlayer to move playback
                                         }
                                 )
                         }
                         .contentShape(Rectangle()) // Make the entire area tappable
                         .onTapGesture { location in
-                            let newProgress = min(max(0, location.x / sliderWidth * totalDuration), totalDuration)
-                            progress = newProgress
-                        }//Zstack
-                        
-                        
-                        
+                            let newProgress = min(max(0, location.x / sliderWidth * audioManager.totalDuration), audioManager.totalDuration)
+                            audioManager.seek(to: newProgress) // 🔥 Tell AVPlayer to move playback
+                        }
                     }
                     .frame(height: 20) // Ensure enough space for the thumb
                     
                     HStack {
-                        Text(formatTime(progress))  // Current time
+                        Text(formatTime(audioManager.progress))  // Current time
                         Spacer()
-                        Text(formatTime(totalDuration)) // Total duration
+                        Text(formatTime(audioManager.totalDuration)) // Total duration
                     }
                     .font(.caption)
                     .foregroundStyle(.primary)
@@ -113,9 +111,9 @@ struct MusicProgressView: View {
                 .padding(.trailing)
                 
                 Button(action: {
-                    togglePlayback()
+                    audioManager.togglePlayback(for: reciter)
                 }) {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                    Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
                         .font(.largeTitle)
                         .padding(.trailing)
                         .foregroundStyle(adaptiveBackground)
@@ -175,9 +173,9 @@ struct MusicProgressView: View {
                 Spacer()
                 
                 Button {
-                    isRepeating.toggle()
+//                    isRepeating.toggle()
                 }label: {
-                    Image(systemName: isRepeating ? "repeat.1" : "repeat")
+                    Image(systemName: "repeat")
                         .resizable()
                         .frame(width: 28, height: 28)
                         .tint(.secondary)
@@ -200,21 +198,7 @@ struct MusicProgressView: View {
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
-    func togglePlayback() {
-        if isPlaying {
-            timer?.invalidate() // Pause
-        } else {
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if progress < totalDuration {
-                    progress += 1
-                } else {
-                    timer?.invalidate() // Stop when song ends
-                    isPlaying = false
-                }
-            }
-        }
-        isPlaying.toggle()
-    }
+
 }
 
 #Preview {
