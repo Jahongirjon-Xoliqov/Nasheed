@@ -12,9 +12,7 @@ struct MusicProgressView: View {
     @State private var progress: Double = 0.0
     let totalDuration: Double = 200 // Example: 200 seconds
     @State private var isPlaying: Bool = false
-//    @State private var timer: Timer?
-//    @State private var isRepeating: Bool = false
-//    @State private var isLiked: Bool = false
+
     
     @EnvironmentObject var viewModel: RecitersViewModel
     let reciter: NasheedEntity
@@ -111,7 +109,7 @@ struct MusicProgressView: View {
                 .padding(.trailing)
                 
                 Button(action: {
-                    audioManager.togglePlayback(for: reciter)
+                    audioManager.togglePlayback()
                 }) {
                     Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
                         .font(.largeTitle)

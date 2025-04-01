@@ -49,6 +49,7 @@ struct ReciterView: View {
                             selectedReciter = reciter
                             isMinimized = false
                             audioManager.loadNasheed(reciter)
+//                            audioManager.togglePlayback(for: reciter)
                             
                             if let fileURLString = selectedReciter?.file, let fileURL = URL(string: fileURLString) {
                                 audioManager.playNasheed(from: fileURL)

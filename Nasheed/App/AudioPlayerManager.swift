@@ -18,6 +18,7 @@ class AudioPlayerManager: ObservableObject {
     private var playerObserver: Any?
     
     @Published var isPlaying = false
+
     @Published var progress: Double = 0.0
     @Published var totalDuration: Double = 0.0
     
@@ -30,9 +31,6 @@ class AudioPlayerManager: ObservableObject {
     func playNasheed(from url: URL) {
         if let cachedItem = cache[url] {
             print("✅ Using cached nasheed")
-            
-            // ❌ Don't reuse the same AVPlayerItem
-            // ❌ player?.replaceCurrentItem(with: cachedItem)
 
             // ✅ Create a new AVPlayerItem from the same URL
             let newItem = AVPlayerItem(url: url)
@@ -55,66 +53,102 @@ class AudioPlayerManager: ObservableObject {
 
     
     
-//    func prepareNasheed(for url: URL) {
-//        if preloadedItems[url.absoluteString] == nil {
-//            let playerItem = AVPlayerItem(url: url)
-//            preloadedItems[url.absoluteString] = playerItem
-//        }
-//    }
     
+    
+    
+    
+    func togglePlayback() {
+        guard let player = player else { return } // Ensure player exists
 
+        if isPlaying {
+            player.pause()
+            timer?.invalidate() // Stop progress updates
+        } else {
+            player.play()
+            
+            // Start a timer to track progress
+            timer?.invalidate() // Stop previous timer
+            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                if self.progress < self.totalDuration {
+                    self.progress += 1
+                } else {
+                    self.timer?.invalidate() // Stop when the nasheed ends
+                    self.isPlaying = false
+                }
+            }
+        }
 
-    
-//    func playNasheed(from url: URL) {
-//        if player?.currentItem == nil || player?.currentItem?.asset != AVURLAsset(url: url) {
-//            player = AVPlayer(url: url) // Only set a new player if needed
-//        }
-//        
-//        player?.play()
-//        isPlaying = true
-//    }
-    
-    
-    
-    
+        isPlaying.toggle()
+    }
+
+   
     func loadNasheed(_ nasheed: NasheedEntity) {
         guard let url = URL(string: nasheed.file) else {
             print("❌ Invalid URL for nasheed file: \(nasheed.file)")
             return
         }
         
+        
+        
         // Stop previous playback
         player?.pause()
+        timer?.invalidate() // Stop previous timer
         
+    
         // Load new audio file
         let newItem = AVPlayerItem(url: url)
-        player?.replaceCurrentItem(with: newItem)
+        player = AVPlayer(playerItem: newItem)
         
+
         // Reset progress and update total duration
         progress = 0.0
         totalDuration = 0.0
-        
-        // Fetch new duration
-        let asset = AVURLAsset(url: url)
 
+        // Fetch new duration BEFORE playing
+        let asset = AVURLAsset(url: url)
         Task {
             do {
                 try await asset.load(.duration)  // Load duration asynchronously
-                let durationSeconds = CMTimeGetSeconds(asset.duration)
+                let durationSeconds = await CMTimeGetSeconds(try! asset.load(.duration))
                 
                 await MainActor.run {
                     self.totalDuration = durationSeconds.isFinite ? durationSeconds : 0.0
+                    
+                    if self.totalDuration > 0 {
+                        self.player?.play()
+                        self.isPlaying = true
+                        self.startTimer()
+                    } else {
+                        }
                 }
             } catch {
                 print("❌ Failed to load duration: \(error)")
             }
         }
-
-        
-        // Play the new nasheed
-        player?.play()
-        isPlaying = true
     }
+
+
+
+    
+    
+    
+
+    
+    func startTimer() {
+        timer?.invalidate() // Stop previous timer
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if self.progress < self.totalDuration {
+                self.progress += 1
+            } else {
+                self.timer?.invalidate()
+                self.isPlaying = false
+            }
+        }
+    }
+
+    
+
+    
 
     
     
@@ -125,54 +159,6 @@ class AudioPlayerManager: ObservableObject {
     }
     
 
-    func togglePlayback(for nasheed: NasheedEntity) {
-        guard let url = URL(string: nasheed.file) else {
-            print("❌ Invalid MP3 URL: \(nasheed.file)")
-            return
-        }
-        
-        if player == nil {
-            player = AVPlayer(url: url)
-            
-            // Fetch the actual duration using new API (iOS 16+)
-            let asset = AVURLAsset(url: url)
-            Task {
-                do {
-                    let duration = try await asset.load(.duration)
-                    DispatchQueue.main.async {
-                        let durationInSeconds = CMTimeGetSeconds(duration)
-                        self.totalDuration = durationInSeconds.isFinite ? durationInSeconds : 0.0
-                        print("⏳ MP3 Duration: \(self.totalDuration) seconds")
-                    }
-                } catch {
-                    print("❌ Error loading duration: \(error.localizedDescription)")
-                }
-            }
-            
-            // Observer to track playback time updates
-            playerObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { [weak self] time in
-                self?.progress = CMTimeGetSeconds(time)
-            }
-        }
-
-        if isPlaying {
-            player?.pause()
-            timer?.invalidate() // Stop progress updates
-        } else {
-            player?.play()
-            
-            // Start a timer to track progress
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if self.progress < self.totalDuration {
-                    self.progress += 1
-                } else {
-                    self.timer?.invalidate() // Stop when the nasheed ends
-                    self.isPlaying = false
-                }
-            }
-        }
-        
-        isPlaying.toggle()
-    }
+  
 }
 
