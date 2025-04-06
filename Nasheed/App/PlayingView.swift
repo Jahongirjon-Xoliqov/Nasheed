@@ -5,15 +5,22 @@ import SDWebImageSwiftUI
 struct PlayingView: View {
     
     @Binding var isMinimized: Bool
-    var reciter: NasheedEntity
     @EnvironmentObject var viewModel: RecitersViewModel
-
     var onMinimize: (NasheedEntity) -> Void
+    
+//    var reciter: NasheedEntity
+ 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) var colorScheme
     @State private var dragOffset: CGFloat = 0
     @State private var isDragging = false
     @State private var impactFeedback = UIImpactFeedbackGenerator(style: .medium) // ✅ Haptic Feedback
+    
+    // Computed property that always reflects current nasheed
+     private var currentNasheed: NasheedEntity {
+         viewModel.currentNasheed ?? .placeholder
+     }
+    
     
     var backgroundColor: Color {
         colorScheme == .dark ? Color(hex: "1E201E") : Color(hex: "F8F3D9")
@@ -48,7 +55,7 @@ struct PlayingView: View {
                                 impactFeedback.impactOccurred()
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
                                     isMinimized = true
-                                    onMinimize(reciter)
+                                    onMinimize(currentNasheed)
                                     dismiss()
                                 }
                             } else {
@@ -61,7 +68,7 @@ struct PlayingView: View {
                 )
                 
                 // ✅ Display Dynamic Image
-                WebImage(url: URL(string: reciter.reciterPhoto))
+                WebImage(url: URL(string: currentNasheed.reciterPhoto))
                     .resizable()
                     .indicator(.activity) // Show loading indicator
                     .transition(.fade(duration: 0.3)) // Smooth transition
@@ -74,18 +81,18 @@ struct PlayingView: View {
 
                 // ✅ Display Reciter's Name and Nasheed Title
                 VStack(alignment: .center) {
-                    Text(reciter.title)
+                    Text(currentNasheed.title)
                         .font(.largeTitle)
                         .fontDesign(.serif)
 
-                    Text(reciter.reciter)
+                    Text(currentNasheed.reciter)
                         .font(.headline)
                         .foregroundColor(.secondary)
                 }
                 .padding(.bottom, 30)
                 
                 // ✅ Music Progress
-                MusicProgressView(reciter: reciter)
+                MusicProgressView(reciter: currentNasheed)
                     .padding(.bottom, 50)
             }
             .toolbar {
@@ -93,7 +100,7 @@ struct PlayingView: View {
                     Button {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                             isMinimized = true
-                            onMinimize(reciter)
+                            onMinimize(currentNasheed)
                             dismiss()
                         }
                     } label: {
@@ -105,7 +112,7 @@ struct PlayingView: View {
                     }
                 }
             }
-            .navigationTitle(reciter.title)
+            .navigationTitle(currentNasheed.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)
             .background(backgroundColor)
@@ -114,12 +121,27 @@ struct PlayingView: View {
     }
 }
 
+// Add this extension for the placeholder
+extension NasheedEntity {
+    static var placeholder: NasheedEntity {
+        NasheedEntity(
+            id: "placeholder",
+            reciter: "Unknown",
+            title: "No Nasheed Selected",
+            file: "",
+            reciterPhoto: "",
+            cover: "",
+            isDownloaded: false,
+            isLiked: false
+        )
+    }
+}
+
 #Preview {
     @Previewable @State var isMinimized: Bool = false
 
     PlayingView(
         isMinimized: $isMinimized,
-        reciter: NasheedEntity(id: "asa", reciter: "Jeck", title: "GO to THE MOON", file: "", reciterPhoto: "", cover: ""),
         onMinimize: { _ in }
     )
     .colorScheme(.light)

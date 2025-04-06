@@ -1,6 +1,3 @@
-
-
-
 //MARK: - Last edition
 import SwiftUI
 import SwiftData
@@ -76,7 +73,7 @@ struct ReciterView: View {
             // MARK: - Minimizing logic
             if isMinimized, let minimizedReciter = minimizedReciter {
                 GeometryReader { geometry in
-                    MinimizedPlayerView(reciter: minimizedReciter) { // Make sure MinimizedPlayerView supports NasheedEntity
+                    MinimizedPlayerView() { // Make sure MinimizedPlayerView supports NasheedEntity
                         withAnimation {
                             selectedReciter = minimizedReciter
                             isMinimized = false
@@ -117,7 +114,6 @@ struct ReciterView: View {
         .fullScreenCover(item: $selectedReciter) { reciter in
             PlayingView(
                 isMinimized: $isMinimized,
-                reciter: reciter, // Now passing NasheedEntity
                 onMinimize: { _ in
                     selectedReciter = nil
                     minimizedReciter = reciter

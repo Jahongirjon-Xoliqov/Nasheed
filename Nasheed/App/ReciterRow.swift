@@ -8,8 +8,13 @@ struct ReciterRow: View {
         colorScheme == .dark ? Color.white : Color.black
     }
 
-    var reciter: NasheedEntity
+//    var reciter: NasheedEntity
+    
     @EnvironmentObject var viewModel: RecitersViewModel
+    
+    private var currentNasheed: NasheedEntity {
+        viewModel.currentNasheed ?? .placeholder
+    }
 
     @State private var isDownloading = false
     @State private var showCheckmark = false
@@ -20,7 +25,7 @@ struct ReciterRow: View {
     var body: some View {
         HStack {
             // Load image from reciterPhoto
-            WebImage(url: URL(string: reciter.reciterPhoto))
+            WebImage(url: URL(string: currentNasheed.reciterPhoto))
                 .resizable()
                 .indicator(.activity) // Show loading indicator
                 .transition(.fade(duration: 0.3)) // Smooth transition
@@ -31,19 +36,19 @@ struct ReciterRow: View {
                 .padding(.trailing, 10)
 
             VStack(alignment: .leading) {
-                Text(reciter.title)
+                Text(currentNasheed.title)
                     .font(.title3)
                     .fontDesign(.serif)
                     .foregroundColor(textColor)
 
-                Text(reciter.reciter)
+                Text(currentNasheed.reciter)
                     .font(.subheadline)
                     .fontDesign(.serif)
                     .foregroundColor(textColor.opacity(0.7))
             }
             Spacer()
 
-            if !reciter.isDownloaded {
+            if !currentNasheed.isDownloaded {
                 if isDownloading {
                     ProgressView(value: Double(completedParts), total: Double(totalParts))
                         .progressViewStyle(QuarterCircleProgressViewStyle(parts: totalParts))
@@ -73,7 +78,7 @@ struct ReciterRow: View {
     // Download logic
     func startDownload() {
         isDownloading = true
-        viewModel.toggleDownload(for: reciter)
+        viewModel.toggleDownload(for: currentNasheed)
         completedParts = 0
 
         for i in 1...totalParts {
@@ -90,7 +95,7 @@ struct ReciterRow: View {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 showCheckmark = false
-                viewModel.toggleDownload(for: reciter)
+                viewModel.toggleDownload(for: currentNasheed)
             }
         }
     }
@@ -124,5 +129,5 @@ struct QuarterCircleProgressViewStyle: ProgressViewStyle {
 }
 
 #Preview {
-    ReciterRow(reciter: NasheedEntity(id: "d", reciter: "Abdulaziz", title: "Go to war", file: "", reciterPhoto: "https://firebasestorage.googleapis.com:443/v0/b/nasheed-65ef6.firebasestorage.app/o/CoverImages%2FstandartCover.jpeg?alt=media&token=6ade49be-c174-415b-b1db-b0ddbf284895", cover: ""))
+    ReciterRow()
 }

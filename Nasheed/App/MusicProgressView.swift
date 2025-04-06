@@ -86,7 +86,7 @@ struct MusicProgressView: View {
             //MARK: - Audio Controlling Buttons
             HStack(spacing: 16) {
                 Button {
-                    // Rewind 15 seconds
+                    audioManager.rewind15secs()
                 } label: {
                     Image(systemName: "15.arrow.trianglehead.counterclockwise")
                         .font(.system(size: 24))
@@ -95,7 +95,7 @@ struct MusicProgressView: View {
                 }
                 
                 Button {
-                    // Skip backward
+                    viewModel.skipToPrevious()
                 } label: {
                     HStack(spacing: -5) {
                         Image(systemName: "arrowtriangle.left.fill")
@@ -118,9 +118,10 @@ struct MusicProgressView: View {
                     
                 }
                 
+             
                 
                 Button {
-                    // Skip forward
+                    viewModel.skipToNext()
                 } label: {
                     HStack(spacing: -5) {
                         Image(systemName: "arrowtriangle.right.fill")
@@ -135,7 +136,7 @@ struct MusicProgressView: View {
                 .padding(.trailing)
                 
                 Button {
-                    // Fast forward 15 seconds
+                    audioManager.fastForward15secs()
                 } label: {
                     Image(systemName: "15.arrow.trianglehead.clockwise")
                         .font(.system(size: 24))
@@ -195,6 +196,8 @@ struct MusicProgressView: View {
         let seconds = Int(time) % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
+    
+
     
 
 }

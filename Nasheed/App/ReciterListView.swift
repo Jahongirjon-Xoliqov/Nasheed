@@ -14,19 +14,19 @@ struct ReciterListView: View {
     let emptyIcon: String
     let emptyDescription: String
     let reciters: [NasheedEntity]
-
+    
     @State private var searchText: String = ""
     @EnvironmentObject var viewModel: RecitersViewModel
     @State private var selectedReciter: NasheedEntity? = nil
     @State private var isMinimized: Bool = false
     @State private var minimizedReciter: NasheedEntity? = nil
     @State private var searchMode: SearchMode = .nasheed
-
+    
     enum SearchMode {
         case reciter
         case nasheed
     }
-
+    
     var filteredReciters: [NasheedEntity] {
         if searchText.isEmpty {
             return reciters
@@ -38,21 +38,28 @@ struct ReciterListView: View {
             }
         }
     }
-
+    
+    
+    
+   
+    //1
     var body: some View {
         NavigationStack {
+            mainContent
+        }
+    }
+    
+    
+    @ViewBuilder
+    private var mainContent: some View {
             if reciters.isEmpty {
-                ContentUnavailableView {
-                    Label(emptyMessage, systemImage: emptyIcon)
-                } description: {
-                    Text(emptyDescription)
-                }
+                contentUnavailableView()
             } else {
                 ZStack(alignment: .bottom) {
                     List {
                         ForEach(Array(filteredReciters).indices, id: \.self) { index in
                             let reciter = filteredReciters[index]
-
+                            
                             Button(action: {
                                 selectedReciter = reciter
                                 isMinimized = false
@@ -69,10 +76,10 @@ struct ReciterListView: View {
                     .safeAreaInset(edge: .top) { Color.clear.frame(height: 12) }
                     .safeAreaInset(edge: .bottom) { Color.clear.frame(height: isMinimized ? 64 : 10) }
                     .searchable(text: $searchText, prompt: searchMode == .reciter ? "Search a reciter..." : "Search a nasheed...")
-
+                    
                     if isMinimized, let minimizedReciter = minimizedReciter {
                         GeometryReader { geometry in
-                            MinimizedPlayerView(reciter: minimizedReciter) {
+                            MinimizedPlayerView() {
                                 withAnimation {
                                     selectedReciter = minimizedReciter
                                     isMinimized = false
@@ -86,7 +93,6 @@ struct ReciterListView: View {
                 .fullScreenCover(item: $selectedReciter) { reciter in
                     PlayingView(
                         isMinimized: $isMinimized,
-                        reciter: reciter,
                         onMinimize: { _ in minimizedReciter = reciter }
                     )
                     .onDisappear { minimizedReciter = reciter }
@@ -110,6 +116,17 @@ struct ReciterListView: View {
                 .toolbarBackground(.cyan.opacity(0.03), for: .navigationBar)
                 .toolbarBackgroundVisibility(.visible, for: .navigationBar)
             }
+    }
+    
+    
+    private func contentUnavailableView() -> some View {
+        ContentUnavailableView {
+            Label(emptyMessage, systemImage: emptyIcon)
+        } description: {
+            Text(emptyDescription)
         }
+        
     }
 }
+
+

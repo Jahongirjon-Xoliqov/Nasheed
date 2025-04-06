@@ -11,7 +11,13 @@ import SDWebImageSwiftUI
 
 
 struct MinimizedPlayerView: View {
-    var reciter: NasheedEntity
+//    var reciter: NasheedEntity
+    @EnvironmentObject var viewModel: RecitersViewModel
+    
+    private var currentNasheed: NasheedEntity {
+        viewModel.currentNasheed ?? .placeholder
+    }
+    
     var onTap: () -> Void
     @Environment(\.colorScheme) var colorScheme
 
@@ -21,16 +27,16 @@ struct MinimizedPlayerView: View {
     
     var body: some View {
         HStack {
-            WebImage(url: URL(string: reciter.reciterPhoto))
+            WebImage(url: URL(string: currentNasheed.reciterPhoto))
                 .resizable()
                 .frame(width: 40, height: 40)
                 .cornerRadius(20)
             
             VStack(alignment: .leading) {
-                Text(reciter.title)
+                Text(currentNasheed.title)
                     .font(.headline)
                     .fontDesign(.serif)
-                Text(reciter.reciter)
+                Text(currentNasheed.reciter)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

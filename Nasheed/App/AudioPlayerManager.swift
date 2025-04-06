@@ -14,6 +14,8 @@ class AudioPlayerManager: ObservableObject {
     
 //    private var preloadedItems: [String: AVPlayerItem] = [:]
     
+
+    
     private var player: AVPlayer?
     private var playerObserver: Any?
     
@@ -80,6 +82,7 @@ class AudioPlayerManager: ObservableObject {
 
         isPlaying.toggle()
     }
+    
 
    
     func loadNasheed(_ nasheed: NasheedEntity) {
@@ -93,6 +96,8 @@ class AudioPlayerManager: ObservableObject {
         // Stop previous playback
         player?.pause()
         timer?.invalidate() // Stop previous timer
+        isPlaying = false  // Reset state before loading new content
+
         
     
         // Load new audio file
@@ -129,9 +134,6 @@ class AudioPlayerManager: ObservableObject {
 
 
 
-    
-    
-    
 
     
     func startTimer() {
@@ -147,7 +149,33 @@ class AudioPlayerManager: ObservableObject {
     }
 
     
+    
+    
+    func rewind15secs() {
+        if progress > 15 {
+            progress -= 15
+        } else {
+            progress = 0
+        }
+        seek(to: progress)
+    }
 
+    
+    
+    
+    func fastForward15secs() {
+        if progress + 15 < totalDuration {
+            progress += 15
+        } else {
+            progress = totalDuration
+        }
+        seek(to: progress)
+    }
+
+    
+    
+    
+   
     
 
     
